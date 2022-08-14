@@ -25,11 +25,23 @@ export default {
   data() {
     return {
       APIKey: "9f326ee9b09aee5a00b633ce569dad61",
-      cities: ['Moscow','London'],
+      cities: [],
       weathers: []
     }
   },
   created() {
+    if (localStorage.getItem('cities'))
+    {
+      console.log('Local storage is: ', localStorage)
+      try {
+          this.cities = localStorage.getItem('cities').split(',')
+      }
+      catch (e) {
+          localStorage.removeItem('cities')
+        }
+    }   
+  },
+  mounted() {
     this.cities.forEach(city => this.getCurrentWeather(city))
     
     if (navigator.geolocation) {
@@ -38,7 +50,6 @@ export default {
         console.log("Geolocation is not supported by this browser.");
     }
   },
-
   methods: {
     getCityWeather() {
       return 0
@@ -46,30 +57,21 @@ export default {
     getCurrentWeather(city) {
       axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.APIKey}`)
         .then(response => {
-          const newWeather = response.data
-          this.weathers.push(newWeather)
-          console.log('this weather', this.weathers)
+          const currentCityWeather = response.data
+          this.weathers.push(currentCityWeather)
         })
         .then(error => console.log(error.response.data))
     },
     showPosition(position) {
       this.setLocalStorage(position)
-       console.log("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude)
     },
     setLocalStorage(position) {
-      this.cities = ['Moscow','London']
-      const parsed = JSON.stringify(this.cities)
-      localStorage.setItem('cities', parsed)
+      // to set weather depand on coordinates use this position prop 
+       console.log("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude)
+
+      const newCities = ['Moscow', 'Amsterdam', 'London']
+      localStorage.setItem('cities', newCities)
     }
-  },
-  mounted() {
-    if (localStorage.getItem('cities'))
-    console.log('Local storage is: ', localStorage)
-      try {
-        this.cities = JSON.parse(localStorage.getItem('cities'))
-      } catch (e) {
-        localStorage.removeItem('cities')
-      }
   },
   watch: {
     cities(newCity) {localStorage.cities = [...this.cities, newCity]}
