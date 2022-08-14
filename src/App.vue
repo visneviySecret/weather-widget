@@ -1,7 +1,9 @@
 <template>
   <div class="main">
-    <div v-if="weather">
-      <CityCard v-bind:weather="this.weather"/>
+    <div v-if="weathers">
+      <div v-for="weather in weathers" :key="weather.id">
+        <CityCard  v-bind:weather="weather"/>
+      </div>
     </div>
     <div v-else>
       Weather is Loading...
@@ -23,14 +25,13 @@ export default {
   data() {
     return {
       APIKey: "9f326ee9b09aee5a00b633ce569dad61",
-      city: ['Moscow'],
       cities: ['Moscow','London'],
-      weather: null
+      weathers: []
     }
   },
   created() {
-    // this.cities.forEach(city => this.getCurrentWeather(city))
-    this.getCurrentWeather(this.city)
+    this.cities.forEach(city => this.getCurrentWeather(city))
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(this.showPosition);
     } else {
@@ -45,10 +46,9 @@ export default {
     getCurrentWeather(city) {
       axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.APIKey}`)
         .then(response => {
-          // const newWeather = response.data
-          // this.weather.push(newWeather)
-          this.weather = response.data
-          console.log(this.weather)
+          const newWeather = response.data
+          this.weathers.push(newWeather)
+          console.log('this weather', this.weathers)
         })
         .then(error => console.log(error.response.data))
     },

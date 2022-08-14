@@ -34,7 +34,7 @@ export default {
     }
   },
   created() {
-    console.log(JSON.parse(JSON.stringify(this.weather)), 'from cityCard')
+    console.log(this.weather, 'from cityCard')
   }
 }
 </script>
