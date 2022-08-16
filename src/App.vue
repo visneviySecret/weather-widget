@@ -1,13 +1,8 @@
 <template>
   <div class="main">
-    <div v-if="weathers">
-      <div v-for="weather in weathers" :key="weather.id">
-        <CityCard  v-bind:weather="weather"/>
-      </div>
-    </div>
-    <div v-else>
-      Weather is Loading...
-    </div>
+    <div v-on:click="toggleModal">Clock settings</div>
+    <Modal v-if="modalOpen" v-bind:cities="cities" :APIKey="APIKey" v-on:add-city="addCity"/> 
+    <CityList v-else v-bind:weathers="weathers"/>
     <router-view v-bind:cities="cities"/>
   </div>
 </template>
@@ -15,18 +10,20 @@
 <script >
 import axios from "axios"
 import {ref} from "vue"
-import CityCard from "./components/CityCard.vue"
+import CityList from "./components/Weather/CityList.vue"
+import Modal from './components/Settings/Modal.vue'
 
 export default {
   name: "App",
   components: {
-    CityCard
+    CityList, Modal
   },
   data() {
     return {
       APIKey: "9f326ee9b09aee5a00b633ce569dad61",
       cities: [],
-      weathers: []
+      weathers: [],
+      modalOpen: false
     }
   },
   created() {
@@ -51,11 +48,18 @@ export default {
     }
   },
   methods: {
+    addCity(newCity, newWeatherData) {
+      this.cities.push(newCity)
+      this.weathers.push(newWeatherData)
+    },
+    toggleModal() {
+      this.modalOpen = !this.modalOpen
+    },
     getCityWeather() {
       return 0
     },
     getCurrentWeather(city) {
-      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.APIKey}`)
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${this.APIKey}`)
         .then(response => {
           const currentCityWeather = response.data
           this.weathers.push(currentCityWeather)
