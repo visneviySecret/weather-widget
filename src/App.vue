@@ -1,9 +1,23 @@
 <template>
   <div class="main">
-    <div v-on:click="toggleModal">Clock settings</div>
-    <Modal v-if="modalOpen" v-bind:cities="cities" :APIKey="APIKey" v-on:add-city="addCity" v-on:delete-city="deleteCity"/> 
-    <CityList v-else v-bind:weathers="weathers"/>
-    <router-view v-bind:cities="cities"/>
+    <div class="App">
+      <div v-on:click="toggleModal">Clock settings</div>
+      <div v-if="isLoading">Loading...</div>
+      <div v-else>
+        <Modal 
+          v-if="modalOpen" 
+          v-bind:cities="cities" 
+          :APIKey="APIKey" 
+          v-on:add-city="addCity" 
+          v-on:delete-city="deleteCity"/> 
+        <CityList 
+          v-else 
+          v-bind:weathers="weathers" 
+          v-on:open-modal="toggleModal"/>
+      </div>
+
+      <router-view v-bind:cities="cities"/>
+    </div>
   </div>
 </template>
 
@@ -23,7 +37,8 @@ export default {
       APIKey: "9f326ee9b09aee5a00b633ce569dad61",
       cities: [],
       weathers: [],
-      modalOpen: false
+      modalOpen: false,
+      isLoading: true
     }
   },
   created() {
@@ -40,11 +55,12 @@ export default {
   },
   mounted() {
     this.cities.forEach(city => this.getCurrentWeather(city))
+    if (this.cities.length === 0) {this.isLoading = false}
     
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(this.showPosition);
     } else {
-        console.log("Geolocation is not supported by this browser.");
+        alert("Geolocation is not supported by this browser.");
     }
   },
   methods: {
@@ -55,7 +71,6 @@ export default {
     deleteCity(city) {
       this.cities = this.cities.filter(item => item !== city)
       this.weathers = this.weathers.filter(item => item.name !== city)
-      console.log(city, 'was deleted')
     },
     toggleModal() {
       this.modalOpen = !this.modalOpen
@@ -68,6 +83,7 @@ export default {
         .then(response => {
           const currentCityWeather = response.data
           this.weathers.push(currentCityWeather)
+          this.isLoading = false
         })
         .then(error => console.log(error.response.data))
     },

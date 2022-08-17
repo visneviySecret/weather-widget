@@ -5,19 +5,24 @@
         <CityCard  v-bind:weather="weather"/>
       </div>
     </div>
-    <div v-else>
-      Weather is Loading...
-    </div>
+    <NoCities v-if="this.weathers.length == 0" v-on:open-modal="openModal"/>
   </div>
 </template>
 
 <script>
 import CityCard from './CityCard.vue'
+import NoCities from './NoCities.vue'
+
 export default {
     components: {
-        CityCard
+        CityCard, NoCities
     },
-    props: ["weathers"]
+  props: ["weathers"],
+  methods: {
+    openModal() {
+        this.$emit("open-modal")
+      }
+    }
 }
 </script>
 

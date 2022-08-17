@@ -29,12 +29,17 @@ export default {
   },
   methods: {
     async addCity() {
-      if (this.cities.find(city => city === this.city)) { alert('This city is alredy in list'); return}
+      if (this.cities.find(city => city.toLowerCase() === this.city.toLowerCase())) { alert('This city is alredy in list'); return}
       if (this.city === "") { alert("Fiels cannot be empty") }
       else {
+        try {
           const res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.APIKey}`)
           const data = await res.data
-          this.$emit("add-city", this.city, data)
+           this.$emit("add-city", this.city, data)
+        }
+        catch {
+          alert("This city doesn't exist, try another one")
+          }
         }
     },
     deleteCity(city) {
