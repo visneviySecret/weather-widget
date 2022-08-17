@@ -3,7 +3,10 @@
     <span>Settings</span>
 
     <ul class="cities-list" v-for="city in cities" :key="city">
-      <li>{{city}}</li>  
+      <li style="display: flex">
+        {{city}}
+        <button @click="deleteCity(city)">delete</button>  
+      </li>  
     </ul>
 
     <div class="modal-wrap" ref="modalWrap">
@@ -26,12 +29,17 @@ export default {
   },
   methods: {
     async addCity() {
+      console.log('from add city', this.city, this.cities, this.cities.find(city => city === this.city))
+      if (this.cities.find(city => city === this.city)) { alert('This city is alredy in list'); return}
       if (this.city === "") { alert("Fiels cannot be empty") }
       else {
           const res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.APIKey}`)
           const data = await res.data
           this.$emit("add-city", this.city, data)
         }
+    },
+    deleteCity(city) {
+        console.log(city, 'was deleted')
       }
     }
 }
