@@ -35,6 +35,7 @@ export default {
   data() {
     return {
       APIKey: "9f326ee9b09aee5a00b633ce569dad61",
+      mapboxAPIKey: "pk.eyJ1IjoiYmVsb2RpbiIsImEiOiJjbDZ4dTBoYWEwNDcwM2NtcGNxeXNtNTh4In0.vOOy5sQ1z79Dc1tQV-6tRA",
       cities: [],
       weathers: [],
       modalOpen: false,
@@ -44,33 +45,39 @@ export default {
   created() {
     if (localStorage.getItem('cities'))
     {
+      // localStorage.clear()
       console.log('Local storage is: ', localStorage)
       try {
-          this.cities = localStorage.getItem('cities').split(',')
+        this.cities = JSON.parse(localStorage.getItem('cities'))
       }
       catch (e) {
           localStorage.removeItem('cities')
         }
     }   
+    else if (window.navigator.geolocation)
+    {
+      navigator.geolocation.getCurrentPosition(this.getUserGeoPosition, console.log);
+      return;
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+    
   },
   mounted() {
     this.cities.forEach(city => this.getCurrentWeather(city))
     if (this.cities.length === 0) {this.isLoading = false}
-    
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.showPosition);
-    } else {
-        alert("Geolocation is not supported by this browser.");
-    }
   },
   methods: {
-    addCity(newCity, newWeatherData) {
+    addCity(cityName, cityId, weatherData) {
+      const newCity = { name: cityName, id: cityId }
       this.cities.push(newCity)
-      this.weathers.push(newWeatherData)
+      this.weathers.push(weatherData)
+      this.setLocalStorage()
     },
     deleteCity(city) {
-      this.cities = this.cities.filter(item => item !== city)
-      this.weathers = this.weathers.filter(item => item.name !== city)
+      this.cities = this.cities.filter(item => item.id !== city.id)
+      this.weathers = this.weathers.filter(item => item.id !== city.id)
+      this.setLocalStorage()
     },
     toggleModal() {
       this.modalOpen = !this.modalOpen
@@ -79,27 +86,34 @@ export default {
       return 0
     },
     getCurrentWeather(city) {
-      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${this.APIKey}`)
+      const {name, id} = city
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${name}&units=imperial&appid=${this.APIKey}`)
         .then(response => {
           const currentCityWeather = response.data
-          this.weathers.push(currentCityWeather)
+          this.weathers.push({ ...currentCityWeather, id }) // change weather's id to handle delete function
+          console.log(this.weathers, 'from current weather')
           this.isLoading = false
         })
         .then(error => console.log(error.response.data))
     },
-    showPosition(position) {
-      this.setLocalStorage(position)
+    getUserGeoPosition(position) {
+      const { latitude, longitude } = position.coords
+      fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=c1ef089d475b4ed185a97c2195435845`)
+        .then(response => response.json())
+        .then(result => result.results[0].components)
+        .then(city => this.setLocalCity(city))
     },
-    setLocalStorage(position) {
-      // to set weather depand on coordinates use this position prop 
-       console.log("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude)
-
-      const newCities = ['Moscow', 'Amsterdam', 'London']
-      localStorage.setItem('cities', newCities)
+    setLocalCity(position) {
+      const { state, postcode } = position
+      this.addCity (state, postcode)
+      this.setLocalStorage()
+    },
+    setLocalStorage() {
+      localStorage.setItem('cities', JSON.stringify(this.cities))
     }
   },
   watch: {
-    cities(newCity) {localStorage.cities = [...this.cities, newCity]}
+    // cities(newCity) {localStorage.cities = [...this.cities, newCity]}
   }
 }
 </script>

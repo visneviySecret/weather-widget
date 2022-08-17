@@ -2,9 +2,9 @@
   <div class="modal" ref="modal">
     <span>Settings</span>
 
-    <ul class="cities-list" v-for="city in cities" :key="city">
+    <ul class="cities-list" v-for="city in cities" :key="city.id">
       <li style="display: flex">
-        {{city}}
+        {{city.name}}
         <button @click="deleteCity(city)" ref="delete">delete</button>  
       </li>  
     </ul>
@@ -51,13 +51,14 @@ export default {
   },
   methods: {
     async addCity() {
-      if (this.cities.find(city => city.toLowerCase() === this.city.toLowerCase())) { alert('This city is alredy in list'); return}
+      if (this.cities.find(city => city.name.toLowerCase() === this.city.toLowerCase())) { alert('This city is alredy in list'); return}
       if (this.city === "") { alert("Field can not be empty") }
       else {
         try {
           const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.APIKey}`)
           const data = await result.data
-          this.$emit("add-city", this.city, data)
+          // console.log('from addcity: ', data)
+          this.$emit("add-city", this.city, data.id, data)
           this.searchQuery = ''
         }
         catch {
@@ -87,7 +88,7 @@ export default {
     },
     previewCity(searchResult) {
       this.searchQuery = searchResult.text
-      this.city = searchResult.text
+      this.city = searchResult.text.replace(/\u0301/g, "")
       this.mapboxSearchResults = ""
     }
   }
