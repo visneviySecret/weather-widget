@@ -5,7 +5,7 @@
     <ul class="cities-list" v-for="city in cities" :key="city">
       <li style="display: flex">
         {{city}}
-        <button @click="deleteCity(city)">delete</button>  
+        <button @click="deleteCity(city)" ref="delete">delete</button>  
       </li>  
     </ul>
 
@@ -29,7 +29,6 @@ export default {
   },
   methods: {
     async addCity() {
-      console.log('from add city', this.city, this.cities, this.cities.find(city => city === this.city))
       if (this.cities.find(city => city === this.city)) { alert('This city is alredy in list'); return}
       if (this.city === "") { alert("Fiels cannot be empty") }
       else {
@@ -39,7 +38,7 @@ export default {
         }
     },
     deleteCity(city) {
-        console.log(city, 'was deleted')
+        this.$emit("delete-city", city)
       }
     }
 }

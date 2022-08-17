@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div v-on:click="toggleModal">Clock settings</div>
-    <Modal v-if="modalOpen" v-bind:cities="cities" :APIKey="APIKey" v-on:add-city="addCity"/> 
+    <Modal v-if="modalOpen" v-bind:cities="cities" :APIKey="APIKey" v-on:add-city="addCity" v-on:delete-city="deleteCity"/> 
     <CityList v-else v-bind:weathers="weathers"/>
     <router-view v-bind:cities="cities"/>
   </div>
@@ -51,6 +51,11 @@ export default {
     addCity(newCity, newWeatherData) {
       this.cities.push(newCity)
       this.weathers.push(newWeatherData)
+    },
+    deleteCity(city) {
+      this.cities = this.cities.filter(item => item !== city)
+      this.weathers = this.weathers.filter(item => item.name !== city)
+      console.log(city, 'was deleted')
     },
     toggleModal() {
       this.modalOpen = !this.modalOpen
