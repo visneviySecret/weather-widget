@@ -1,12 +1,16 @@
 <template>
   <div class="main">
     <div class="App">
-      <div v-on:click="toggleModal">Clock settings</div>
+      <div class="cog-mg" v-on:click="toggleModal">
+        <img v-if="!modalOpen" width="20px" src="./assets/icon_settingscog.png" alt="">
+        <img v-else width="20px" src="./assets/icon_cross.png"/>
+      </div>
       <div v-if="isLoading">Loading...</div>
       <div v-else>
         <Modal 
           v-if="modalOpen" 
           v-bind:cities="cities" 
+          v-bind:weathers="weathers"
           :APIKey="APIKey" 
           v-on:add-city="addCity" 
           v-on:delete-city="deleteCity"/> 
@@ -15,7 +19,6 @@
           v-bind:weathers="weathers" 
           v-on:open-modal="toggleModal"/>
       </div>
-
       <router-view v-bind:cities="cities"/>
     </div>
   </div>
@@ -123,7 +126,12 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
- font-family: "Lato", sans-serif;
-
+  font-family: "Lato", sans-serif;
+}
+.cog-mg{
+  position: absolute;
+  top: 1rem;
+  left: 13.4rem;
+  cursor: pointer;
 }
 </style>
