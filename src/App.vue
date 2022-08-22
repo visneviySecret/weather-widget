@@ -13,7 +13,8 @@
           v-bind:weathers="weathers"
           :APIKey="APIKey" 
           v-on:add-city="addCity" 
-          v-on:delete-city="deleteCity"/> 
+          v-on:delete-city="deleteCity"
+          v-on:update-cities="updateCities"/> 
         <CityList 
           v-else 
           v-bind:weathers="weathers" 
@@ -67,10 +68,13 @@ export default {
     
   },
   mounted() {
-    this.cities.forEach(city => this.getCurrentWeather(city))
+    this.loadWeather()
     if (this.cities.length === 0) {this.isLoading = false}
   },
   methods: {
+    loadWeather() {
+      this.cities.forEach(city => this.getCurrentWeather(city))
+    },
     addCity(cityName, cityId, weatherData) {
       const newCity = { name: cityName, id: cityId }
       this.cities.push(newCity)
@@ -81,6 +85,12 @@ export default {
       this.cities = this.cities.filter(item => item.id !== city.id)
       this.weathers = this.weathers.filter(item => item.id !== city.id)
       this.setLocalStorage()
+    },
+    updateCities(value) {
+      // this.cities = value
+      // this.weather = []
+      // this.loadWeather()
+      console.log(value[0].name)
     },
     toggleModal() {
       this.modalOpen = !this.modalOpen
@@ -94,7 +104,6 @@ export default {
         .then(response => {
           const currentCityWeather = response.data
           this.weathers.push({ ...currentCityWeather, id }) // change weather's id to handle delete function
-          console.log(this.weathers, 'from current weather')
           this.isLoading = false
         })
         .then(error => console.log(error.response.data))

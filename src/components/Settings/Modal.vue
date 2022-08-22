@@ -2,13 +2,20 @@
   <div class="modal-wrapper" ref="modal">
     <span class="header">Settings</span>
 
-    <ul class="cities-list">
-      <li  v-for="city in cities" :key="city.id" class="city">
-          <img class="drag-img" src="../../assets/icon_drag.png" width="20px" alt="draggable object">
-          {{city.name}}, 
-            <img class="delete-button" width="30px" alt="trash bin" src="../../assets/icon_trash.png" @click="deleteCity(city)">
-      </li>
-    </ul>
+    <draggable 
+      class="cities-list" 
+      v-model="myList"  
+      @start="drag=true" 
+      @end="drag=false" 
+      animation="300"
+      >
+        <div  class="city" v-for="(city, index) in cities" :key="city.id">
+          <img class="drag-img" width="20px" alt="draggable object" src="../../assets/icon_drag.png"  >
+          {{city.name}}, {{weathers[index].sys.country}}
+          <img class="delete-button" width="30px" alt="trash bin" src="../../assets/icon_trash.png" @click="deleteCity(city)">
+        </div>
+
+    </draggable>
 
 
     <div class="add-location">
@@ -40,6 +47,7 @@
 <script>
 import axios from "axios"
 import { ref } from "vue"
+import draggable from 'vuedraggable'
 
 export default {
   name: "modalSettings",
@@ -53,6 +61,20 @@ export default {
           mapboxSearchResults: '',
           searchError: null
         }
+  },
+  components: {
+    draggable
+  },
+  computed: {
+    myList: {
+      get() {
+        return this.cities
+      },
+      set(value) {
+        console.log(value[0].name)
+        this.$emit("update-cities", value)
+      }
+    }
   },
   methods: {
     async addCity() {
@@ -118,7 +140,7 @@ export default {
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1.1rem;
 }
 .city {
   list-style-type: none;

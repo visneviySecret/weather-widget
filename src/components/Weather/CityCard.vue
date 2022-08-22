@@ -10,17 +10,16 @@
       </div>
       <div class="description">Feels like {{this.feels_like}}&deg;C. {{description[0].toUpperCase()}}{{description.slice(1)}} </div>
       <div class="parameters">
-        <div v-for="(parameter, key, index) in parameters" :key="key">
+        <div class="parameter" v-for="(parameter, key, index) in parameters" :key="key">
+          
           <div v-if="parametersTitle[index].title.includes('http')">
-              <img :src="parametersTitle[index].title" alt="" width="18px">
-          </div>
-          <div v-else>
-              <span>{{parametersTitle[index].title}}:</span>
-          </div>
+              <img :src="parametersTitle[index].title" alt="" width="18px"></div>
+          <div v-else><span>{{parametersTitle[index].title}}:</span></div>
+
           {{parameter}}
-          <div v-if="parametersTitle[index].measure.includes('deg')">&deg;C</div>
-          <div v-else>{{parametersTitle[index].measure}}
-          </div>
+          <span v-if="parametersTitle[index].measure.includes('deg')">&deg;C</span>
+          <span v-else>{{parametersTitle[index].measure}}</span>
+
         </div>
       </div>
     </body>
@@ -50,7 +49,7 @@ export default {
 
       icon_url,
       parameters: {
-          wind: this.weather.wind.speed,
+          wind: Math.round(this.weather.wind.speed*10)/10,
           pressure: this.weather.main.pressure,
           humidity: this.weather.main.humidity,
           dew_point: null,
@@ -105,8 +104,10 @@ export default {
   row-gap: 0.2rem;
 
 }
-.parameters div {
+.parameters div{
   display: flex; 
-  gap: 0.2rem;
+}
+.parameter div {
+  margin-right: 0.35rem;
 }
 </style>

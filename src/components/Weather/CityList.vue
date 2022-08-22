@@ -4,6 +4,7 @@
       <div v-for="weather in weathers" :key="weather.id">
         <CityCard  v-bind:weather="weather" class="card"/>
       </div>
+
     </div>
     <NoCities v-if="this.weathers.length == 0" v-on:open-modal="openModal"/>
   </div>
