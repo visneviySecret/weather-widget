@@ -40,43 +40,22 @@ export default {
     return {
       APIKey: "9f326ee9b09aee5a00b633ce569dad61",
       mapboxAPIKey: "pk.eyJ1IjoiYmVsb2RpbiIsImEiOiJjbDZ4dTBoYWEwNDcwM2NtcGNxeXNtNTh4In0.vOOy5sQ1z79Dc1tQV-6tRA",
-      cities: [],
-      weathers: [],
+      cities: ref([]),
+      weathers: ref([]),
       modalOpen: false,
-      isLoading: true
+      isLoading: true,
+      order: 0
     }
   },
-  created() {
-    if (localStorage.getItem('cities'))
-    {
-      // localStorage.clear()
-      console.log('Local storage is: ', localStorage)
-      try {
-        this.cities = JSON.parse(localStorage.getItem('cities'))
-      }
-      catch (e) {
-          localStorage.removeItem('cities')
-        }
-    }   
-    else if (window.navigator.geolocation)
-    {
-      navigator.geolocation.getCurrentPosition(this.getUserGeoPosition, console.log);
-      return;
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-    
-  },
+  created() {this.loadLocalStorage()},
   mounted() {
     this.loadWeather()
-    if (this.cities.length === 0) {this.isLoading = false}
+    if (this.cities.length === 0) { this.isLoading = false }
   },
   methods: {
-    loadWeather() {
-      this.cities.forEach(city => this.getCurrentWeather(city))
-    },
-    addCity(cityName, cityId, weatherData) {
-      const newCity = { name: cityName, id: cityId }
+    toggleModal() {this.modalOpen = !this.modalOpen},
+    addCity(cityName, cityId, country, weatherData) {
+      const newCity = { name: cityName, id: cityId, country, order: ++this.order }
       this.cities.push(newCity)
       this.weathers.push(weatherData)
       this.setLocalStorage()
@@ -87,17 +66,15 @@ export default {
       this.setLocalStorage()
     },
     updateCities(value) {
-      // this.cities = value
-      // this.weather = []
-      // this.loadWeather()
-      console.log(value[0].name)
+      this.cities = value
+      this.cities.forEach((city, index) => {
+        city.order = index
+      })
+      this.weathers = []
+      this.loadWeather()
+      this.setLocalStorage()
     },
-    toggleModal() {
-      this.modalOpen = !this.modalOpen
-    },
-    getCityWeather() {
-      return 0
-    },
+    loadWeather() {this.cities.forEach(city => this.getCurrentWeather(city))},
     getCurrentWeather(city) {
       const {name, id} = city
       axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${name}&units=imperial&appid=${this.APIKey}`)
@@ -106,7 +83,6 @@ export default {
           this.weathers.push({ ...currentCityWeather, id }) // change weather's id to handle delete function
           this.isLoading = false
         })
-        .then(error => console.log(error.response.data))
     },
     getUserGeoPosition(position) {
       const { latitude, longitude } = position.coords
@@ -120,13 +96,26 @@ export default {
       this.addCity (state, postcode)
       this.setLocalStorage()
     },
-    setLocalStorage() {
-      localStorage.setItem('cities', JSON.stringify(this.cities))
+    setLocalStorage() {localStorage.setItem('cities', JSON.stringify(this.cities))},
+    loadLocalStorage() {
+    if (localStorage.getItem('cities'))
+      {
+        try {
+        this.cities = JSON.parse(localStorage.getItem('cities'))
+        }
+        catch (e) {
+          localStorage.removeItem('cities')
+          }
+      }   
+      else if (window.navigator.geolocation)
+      {
+        navigator.geolocation.getCurrentPosition(this.getUserGeoPosition, console.log);
+        return;
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
     }
   },
-  watch: {
-    // cities(newCity) {localStorage.cities = [...this.cities, newCity]}
-  }
 }
 </script>
 

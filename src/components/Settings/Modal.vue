@@ -8,10 +8,11 @@
       @start="drag=true" 
       @end="drag=false" 
       animation="300"
+      handle=".drag-img"
       >
-        <div  class="city" v-for="(city, index) in cities" :key="city.id">
+        <div  class="city" v-for="city in cities" :key="city.id">
           <img class="drag-img" width="20px" alt="draggable object" src="../../assets/icon_drag.png"  >
-          {{city.name}}, {{weathers[index].sys.country}}
+          {{city.name}}, {{city.country}}
           <img class="delete-button" width="30px" alt="trash bin" src="../../assets/icon_trash.png" @click="deleteCity(city)">
         </div>
 
@@ -46,12 +47,11 @@
 
 <script>
 import axios from "axios"
-import { ref } from "vue"
 import draggable from 'vuedraggable'
 
 export default {
   name: "modalSettings",
-    props: ["cities", "APIKey", "weathers"],
+    props: ["cities", "APIKey"],
     data() {
         return {
           city: "",
@@ -71,7 +71,6 @@ export default {
         return this.cities
       },
       set(value) {
-        console.log(value[0].name)
         this.$emit("update-cities", value)
       }
     }
@@ -84,8 +83,8 @@ export default {
         try {
           const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.APIKey}`)
           const data = await result.data
-          // console.log('from addcity: ', data)
-          this.$emit("add-city", this.city, data.id, data)
+          console.log('from addcity: ', data)
+          this.$emit("add-city", this.city, data.id, data.sys.country, data)
           this.searchQuery = ''
         }
         catch {
