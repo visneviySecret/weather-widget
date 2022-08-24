@@ -1,4 +1,5 @@
 # weather-app
+The app shows current weather. And geolocate user in first start
 
 ## Project setup
 ```

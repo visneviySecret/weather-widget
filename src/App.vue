@@ -27,11 +27,11 @@
 
 <script >
 import axios from "axios"
-import {ref} from "vue"
+import {ref, defineComponent} from "vue"
 import CityList from "./components/Weather/CityList.vue"
 import Modal from './components/Settings/Modal.vue'
 
-export default {
+export default defineComponent({
   name: "App",
   components: {
     CityList, Modal
@@ -89,7 +89,10 @@ export default {
       fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=c1ef089d475b4ed185a97c2195435845`)
         .then(response => response.json())
         .then(result => result.results[0].components)
-        .then(city => this.setLocalCity(city))
+        .then(city => {
+          this.setLocalCity(city)
+          alert('Your current position is: ', city)
+        })
     },
     setLocalCity(position) {
       const { state, postcode } = position
@@ -110,13 +113,14 @@ export default {
       else if (window.navigator.geolocation)
       {
         navigator.geolocation.getCurrentPosition(this.getUserGeoPosition, console.log);
+        
         return;
       } else {
         alert("Geolocation is not supported by this browser.");
       }
     }
   },
-}
+})
 </script>
 
 <style>
@@ -131,5 +135,10 @@ export default {
   top: 1rem;
   left: 13.4rem;
   cursor: pointer;
+}
+.App {
+  width: 16rem;
+  margin: 0 auto;
+  position: relative;
 }
 </style>
