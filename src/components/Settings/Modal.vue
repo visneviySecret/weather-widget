@@ -13,7 +13,7 @@
         <div  class="city" v-for="city in cities" :key="city.id">
           <img class="drag-img" width="20px" alt="draggable object" src="../../assets/icon_drag.png"  >
           {{city.name}}, {{city.country}}
-          <img class="delete-button" width="30px" alt="trash bin" src="../../assets/icon_trash.png" @click="deleteCity(city)">
+          <img class="delete-button" width="20px" alt="trash bin" src="../../assets/icon_trash.svg" @click="deleteCity(city)">
         </div>
 
     </draggable>
@@ -28,7 +28,7 @@
             @input="getSearchResults"
             placeholder="search by city name" 
             v-model="searchQuery">
-            <img @click="addCity" src="../../assets/icon_enter.png" alt="" width="30px">
+            <img @click="addCity" src="../../assets/icon_enter.svg" alt="" width="30px">
         </div>
 
         <ul
@@ -36,7 +36,8 @@
           <li 
             v-for="searchResult in this.mapboxSearchResults" 
             :key="searchResult.id"
-            @click="previewCity(searchResult)">
+            @click="previewCity(searchResult)"
+            class="search-result">
             {{ searchResult.place_name}}
           </li>
         </ul>
@@ -135,17 +136,17 @@ export default {
 }
 .cities-list{
   margin-top: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1.5rem;
 }
 .city {
   list-style-type: none;
   display: flex;
   align-items: center;
   background-color: rgba(58, 50, 44, 0.2);
-  height: 1.5rem;
+  height: 2rem;
   position: relative;
 }
 .drag-img {
@@ -155,10 +156,13 @@ export default {
 }
 .delete-button{
   position: absolute;
-  right: 0.1rem;
-  background: transparent;
+  right: 0.3rem;
   border: none;
   cursor: pointer;
+}
+.delete-button:hover {
+  z-index: 100;
+  box-shadow: 0px 1px 8px rgba(155, 154, 154, 0.8);
 }
 .add-location__input-enter {
   display: flex;
@@ -178,5 +182,11 @@ export default {
 .add-location button {
   border: none;
   cursor: pointer;
+}
+.search-result{
+  cursor: pointer;
+}
+.search-result:hover {
+  background-color: rgba(70, 66, 66, 0.2);
 }
 </style>
