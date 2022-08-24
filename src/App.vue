@@ -25,47 +25,56 @@
   </div>
 </template>
 
-<script >
+<script lang="ts">
 import axios from "axios"
-import {ref, defineComponent} from "vue"
+import {ref, defineComponent, reactive, toRefs} from "vue"
 import CityList from "./components/Weather/CityList.vue"
 import Modal from './components/Settings/Modal.vue'
+import City from '@/types/city'
+import Position from "@/types/Position"
 
 export default defineComponent({
   name: "App",
   components: {
-    CityList, Modal
+    CityList, Modal,
+  },
+  setup() {
+    const cities = ref<City[]>([])
+    const state = reactive({
+      weathers: [],
+      modalOpen: false,
+      isLoading: true,
+      order: 0
+    })
+    return { ...toRefs(state), cities}
   },
   data() {
     return {
       APIKey: "9f326ee9b09aee5a00b633ce569dad61",
       mapboxAPIKey: "pk.eyJ1IjoiYmVsb2RpbiIsImEiOiJjbDZ4dTBoYWEwNDcwM2NtcGNxeXNtNTh4In0.vOOy5sQ1z79Dc1tQV-6tRA",
-      cities: ref([]),
-      weathers: ref([]),
-      modalOpen: false,
-      isLoading: true,
-      order: 0
     }
   },
-  created() {this.loadLocalStorage()},
+  created() {
+    this.loadLocalStorage()
+  },
   mounted() {
     this.loadWeather()
     if (this.cities.length === 0) { this.isLoading = false }
   },
   methods: {
     toggleModal() {this.modalOpen = !this.modalOpen},
-    addCity(cityName, cityId, country, weatherData) {
+    addCity(cityName: string, cityId: number, country?: string, weatherData?: object) {
       const newCity = { name: cityName, id: cityId, country, order: ++this.order }
       this.cities.push(newCity)
       this.weathers.push(weatherData)
       this.setLocalStorage()
     },
-    deleteCity(city) {
+    deleteCity(city: City) {
       this.cities = this.cities.filter(item => item.id !== city.id)
       this.weathers = this.weathers.filter(item => item.id !== city.id)
       this.setLocalStorage()
     },
-    updateCities(value) {
+    updateCities(value: City[]) {
       this.cities = value
       this.cities.forEach((city, index) => {
         city.order = index
@@ -75,7 +84,7 @@ export default defineComponent({
       this.setLocalStorage()
     },
     loadWeather() {this.cities.forEach(city => this.getCurrentWeather(city))},
-    getCurrentWeather(city) {
+    getCurrentWeather(city: City) {
       const {name, id} = city
       axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${name}&units=imperial&appid=${this.APIKey}`)
         .then(response => {
@@ -84,19 +93,20 @@ export default defineComponent({
           this.isLoading = false
         })
     },
-    getUserGeoPosition(position) {
+    getUserGeoPosition(position: Position) {
+      console.log(position)
       const { latitude, longitude } = position.coords
       fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=c1ef089d475b4ed185a97c2195435845`)
         .then(response => response.json())
         .then(result => result.results[0].components)
         .then(city => {
           this.setLocalCity(city)
-          alert('Your current position is: ', city)
+          // alert('Your current position is: ', city)
         })
     },
-    setLocalCity(position) {
+    setLocalCity(position: any) {
       const { state, postcode } = position
-      this.addCity (state, postcode)
+      this.addCity(state, postcode)
       this.setLocalStorage()
     },
     setLocalStorage() {localStorage.setItem('cities', JSON.stringify(this.cities))},
@@ -104,7 +114,8 @@ export default defineComponent({
     if (localStorage.getItem('cities'))
       {
         try {
-        this.cities = JSON.parse(localStorage.getItem('cities'))
+          this.cities = JSON.parse(localStorage.getItem('cities'))
+          
         }
         catch (e) {
           localStorage.removeItem('cities')
@@ -123,7 +134,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="css">
 * {
   margin: 0;
   padding: 0;

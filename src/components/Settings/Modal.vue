@@ -83,7 +83,6 @@ export default {
         try {
           const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.APIKey}`)
           const data = await result.data
-          console.log('from addcity: ', data)
           this.$emit("add-city", this.city, data.id, data.sys.country, data)
           this.searchQuery = ''
         }

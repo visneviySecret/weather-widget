@@ -1,14 +1,14 @@
 <template>
   <div class="Card">
     <header class="header">
-      {{ this.city }}, {{ this.country}}
+      {{ name }}, {{ country}}
     </header>
     <body class="body">
       <div class="img-temp">
         <img class="img" :src="icon_url" />
-        <div class="temperature">{{this.temperature}}&deg;C</div>
+        <div class="temperature">{{temperature}}&deg;C</div>
       </div>
-      <div class="description">Feels like {{this.feels_like}}&deg;C. {{description[0].toUpperCase()}}{{description.slice(1)}} </div>
+      <div class="description">Feels like {{feels_like}}&deg;C. {{description[0].toUpperCase()}}{{description.slice(1)}} </div>
       <div class="parameters">
         <div class="parameter" v-for="(parameter, key, index) in parameters" :key="key">
           
@@ -26,10 +26,17 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import Weather from '@/types/Weather'
+
+export default defineComponent({
   name: "CityCard",
-  props: ["weather"],
+  props: {
+    weather: {
+      required: true,
+      type: Object as PropType<Weather>,
+  }},
   data() {
     const icon = this.weather.weather[0].icon
     const icon_url = `http://openweathermap.org/img/wn/${icon}@2x.png`
@@ -41,7 +48,7 @@ export default {
       {title: "Visibility", measure:"km"}
     ]
     return {
-      city: this.weather.name,
+      name: this.weather.name,
       country: this.weather.sys.country,
       temperature: Math.round((this.weather.main.temp-32)*5/9),
       feels_like: Math.round((this.weather.main.feels_like-32)*5/9),
@@ -70,7 +77,7 @@ export default {
     }
     }
   }
-}
+})
 </script>
 
 <style>

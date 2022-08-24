@@ -1,5 +1,5 @@
 {
-  "name": "weather-app",
+  "name": "weather-widget001",
   "version": "0.1.1",
   "description": "Weather widget that can geolocate user and show current weather",
   "author": {
@@ -14,7 +14,7 @@
   "files": [
     "dist"
   ],
-  "private": true,
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -41,6 +41,7 @@
     "@vue/eslint-config-typescript": "^9.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
+    "sass-loader": "^13.0.2",
     "typescript": "~4.5.5",
     "vue-template-compiler": "^2.6.14"
   }
