@@ -1,14 +1,19 @@
 {
   "name": "weather-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Weather widget that can geolocate user and show current weather",
   "author": {
     "name": "Egor Bel1",
     "email": "egor06tiger@gmail.com"
   },
   "repository": "https://github.com/visneviySecret/weather-widget",
-  "keywords": ["weather", "widget"],
-  "files":["dist"],
+  "keywords": [
+    "weather",
+    "widget"
+  ],
+  "files": [
+    "dist"
+  ],
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
