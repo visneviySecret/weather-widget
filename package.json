@@ -1,6 +1,6 @@
 {
   "name": "weather-widget001",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Weather widget that can geolocate user and show current weather",
   "author": {
     "name": "Egor Bel1",
@@ -11,7 +11,9 @@
     "weather",
     "widget"
   ],
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
