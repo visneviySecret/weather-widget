@@ -3,7 +3,15 @@ The app shows current weather. And geolocate user in first start
 
 ## Project setup
 ```
-npm install
+npm install weather-widget001
+```
+## Run with script
+```
+<script src=”https://www.npmjs.com/package/weather-widget001"></script>
+```
+## Or import as a component 
+```
+import WeatherWidgetApp from 'weather-widget001'
 ```
 
 ### Compiles and hot-reloads for development
