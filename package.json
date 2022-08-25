@@ -1,5 +1,5 @@
 {
-  "name": "weather-widget001",
+  "name": "weather-widget-app",
   "version": "0.1.3",
   "description": "Weather widget that can geolocate user and show current weather",
   "author": {
@@ -18,10 +18,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build:npm": "vue-cli-service build --target lib --name WeatherWidget src/App.vue"
+    "build:npm": "vue-cli-service build --target lib --name WeatherWidgetApp src/WeatherWidgetApp.vue"
   },
-  "main": "dist/App.umd.js",
-  "unpkg": "dist/App.umd.min.js",
+  "main": "dist/WeatherWidgetApp.umd.js",
+  "unpkg": "dist/WeatherWidgetApp.umd.min.js",
   "dependencies": {
     "axios": "^0.27.2",
     "core-js": "^3.8.3",

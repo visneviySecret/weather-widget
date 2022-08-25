@@ -1,8 +1,10 @@
 interface Position {
     coords: { 
         latitude: number | string,
-        longitude: number
-    }
+        longitude: number,
+    },
+    postcode: number,
+    state: string
 }
 
 export default Position

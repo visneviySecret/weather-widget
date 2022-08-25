@@ -30,11 +30,11 @@ import axios from "axios"
 import {ref, defineComponent, reactive, toRefs} from "vue"
 import CityList from "./components/Weather/CityList.vue"
 import Modal from './components/Settings/Modal.vue'
-import City from '@/types/city'
+import City from '@/types/City'
 import Position from "@/types/Position"
 
 export default defineComponent({
-  name: "App",
+  name: "WeatherWidgetApp",
   components: {
     CityList, Modal,
   },
@@ -93,7 +93,7 @@ export default defineComponent({
           this.isLoading = false
         })
     },
-    getUserGeoPosition(position: Position) {
+    getUserGeoPosition(position: any) {
       console.log(position)
       const { latitude, longitude } = position.coords
       fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=c1ef089d475b4ed185a97c2195435845`)
@@ -101,10 +101,9 @@ export default defineComponent({
         .then(result => result.results[0].components)
         .then(city => {
           this.setLocalCity(city)
-          // alert('Your current position is: ', city)
         })
     },
-    setLocalCity(position: any) {
+    setLocalCity(position: Position) {
       const { state, postcode } = position
       this.addCity(state, postcode)
       this.setLocalStorage()
