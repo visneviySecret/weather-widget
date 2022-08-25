@@ -34,7 +34,7 @@ import City from '@/types/City'
 import Position from "@/types/Position"
 
 export default defineComponent({
-  name: "WeatherWidgetApp",
+  name: "App",
   components: {
     CityList, Modal,
   },
