@@ -1,4 +1,5 @@
 {
+  "homepage": "https://visneviysecret.github.io/",
   "name": "weather-widget001",
   "version": "0.1.7",
   "description": "Weather widget that can geolocate user and show current weather",
@@ -24,6 +25,7 @@
   "main": "dist/WeatherWidgetApp.umd.js",
   "unpkg": "dist/WeatherWidgetApp.umd.min.js",
   "dependencies": {
+    "@types/webpack-env": "^1.18.0",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "vue": "^2.6.14",

@@ -30,8 +30,9 @@ import axios from "axios"
 import {ref, defineComponent, reactive, toRefs} from "vue"
 import CityList from "./components/Weather/CityList.vue"
 import Modal from './components/Settings/Modal.vue'
-import City from '@/types/City'
-import Position from "@/types/Position"
+import City from './types/City'
+import Position from "./types/Position"
+import Weather from './types/Weather'
 
 export default defineComponent({
   name: "App",
@@ -39,14 +40,14 @@ export default defineComponent({
     CityList, Modal,
   },
   setup() {
-    const cities = ref<City[]>([])
+    const cities = ref<City[] | null>([])
+    const weathers = ref<Weather[] | null>([])
     const state = reactive({
-      weathers: [],
       modalOpen: false,
       isLoading: true,
       order: 0
     })
-    return { ...toRefs(state), cities}
+    return { ...toRefs(state), cities, weathers}
   },
   data() {
     return {
@@ -63,7 +64,7 @@ export default defineComponent({
   },
   methods: {
     toggleModal() {this.modalOpen = !this.modalOpen},
-    addCity(cityName: string, cityId: number, country?: string, weatherData?: object) {
+    addCity(cityName: string, cityId: number, country?: string, weatherData?: Weather) {
       const newCity = { name: cityName, id: cityId, country, order: ++this.order }
       this.cities.push(newCity)
       this.weathers.push(weatherData)
@@ -105,6 +106,7 @@ export default defineComponent({
     },
     setLocalCity(position: Position) {
       const { state, postcode } = position
+      console.log("user current position is: ",)
       this.addCity(state, postcode)
       this.setLocalStorage()
     },
@@ -114,7 +116,6 @@ export default defineComponent({
       {
         try {
           this.cities = JSON.parse(localStorage.getItem('cities'))
-          
         }
         catch (e) {
           localStorage.removeItem('cities')
