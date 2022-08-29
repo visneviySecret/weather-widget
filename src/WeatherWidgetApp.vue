@@ -56,6 +56,7 @@ export default defineComponent({
   },
   created() {
     this.loadLocalStorage()
+    console.log("Welcome to weather app!")
   },
   mounted() {
     this.loadWeather()
