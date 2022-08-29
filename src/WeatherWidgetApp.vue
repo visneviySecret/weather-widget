@@ -1,26 +1,26 @@
 <template>
   <div class="main">
     <div class="App">
-      <div class="cog-mg" v-on:click="this.toggleModal">
-        <img v-if="!this.modalOpen" width="20px" src="./assets/icon_settingscog.png" alt="">
+      <div class="cog-mg" v-on:click="toggleModal">
+        <img v-if="!modalOpen" width="20px" src="./assets/icon_settingscog.png" alt="">
         <img v-else width="20px" src="./assets/icon_cross.png"/>
       </div>
-      <div v-if="this.isLoading">Loading...</div>
+      <div v-if="isLoading">Loading...</div>
       <div v-else>
         <Modal 
-          v-if="this.modalOpen" 
-          v-bind:cities="this.cities" 
-          v-bind:weathers="this.weathers"
-          :APIKey="this.APIKey" 
-          v-on:add-city="this.addCity" 
-          v-on:delete-city="this.deleteCity"
-          v-on:update-cities="this.updateCities"/> 
+          v-if="modalOpen" 
+          v-bind:cities="cities" 
+          v-bind:weathers="weathers"
+          :APIKey="APIKey" 
+          v-on:add-city="addCity" 
+          v-on:delete-city="deleteCity"
+          v-on:update-cities="updateCities"/> 
         <CityList 
           v-else 
-          v-bind:weathers="this.weathers" 
-          v-on:open-modal="this.toggleModal"/>
+          v-bind:weathers="weathers" 
+          v-on:open-modal="toggleModal"/>
       </div>
-      <router-view v-bind:cities="this.cities"/>
+      <router-view v-bind:cities="cities"/>
     </div>
   </div>
 </template>
@@ -30,9 +30,8 @@ import axios from "axios"
 import {ref, defineComponent, reactive, toRefs} from "vue"
 import CityList from "./components/Weather/CityList.vue"
 import Modal from './components/Settings/Modal.vue'
-import City from './types/City'
-import Position from "./types/Position"
-import Weather from './types/Weather'
+import City from '@/types/City'
+import Position from "@/types/Position"
 
 export default defineComponent({
   name: "App",
@@ -40,14 +39,14 @@ export default defineComponent({
     CityList, Modal,
   },
   setup() {
-    const cities = ref<City[] | null>([])
-    const weathers = ref<Weather[] | null>([])
+    const cities = ref<City[]>([])
     const state = reactive({
+      weathers: [],
       modalOpen: false,
       isLoading: true,
       order: 0
     })
-    return { ...toRefs(state), cities, weathers}
+    return { ...toRefs(state), cities}
   },
   data() {
     return {
@@ -57,7 +56,6 @@ export default defineComponent({
   },
   created() {
     this.loadLocalStorage()
-    console.log("Hi from a new version of WeatherApp!")
   },
   mounted() {
     this.loadWeather()
@@ -65,7 +63,7 @@ export default defineComponent({
   },
   methods: {
     toggleModal() {this.modalOpen = !this.modalOpen},
-    addCity(cityName: string, cityId: number, country?: string, weatherData?: Weather) {
+    addCity(cityName: string, cityId: number, country?: string, weatherData?: object) {
       const newCity = { name: cityName, id: cityId, country, order: ++this.order }
       this.cities.push(newCity)
       this.weathers.push(weatherData)
@@ -107,7 +105,6 @@ export default defineComponent({
     },
     setLocalCity(position: Position) {
       const { state, postcode } = position
-      console.log("user current position is: ",)
       this.addCity(state, postcode)
       this.setLocalStorage()
     },
@@ -117,6 +114,7 @@ export default defineComponent({
       {
         try {
           this.cities = JSON.parse(localStorage.getItem('cities'))
+          
         }
         catch (e) {
           localStorage.removeItem('cities')

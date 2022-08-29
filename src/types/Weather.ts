@@ -1,5 +1,4 @@
 interface Weather {
-    id: number;
         weather:  Array<{
             dew_point: number|null,
             description: string,
