@@ -1,4 +1,5 @@
 {
+  "homepage": "https://visneviysecret.github.io/",
   "name": "weather-widget001",
   "version": "0.1.7",
   "description": "Weather widget that can geolocate user and show current weather",
