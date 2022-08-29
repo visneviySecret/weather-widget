@@ -1,26 +1,26 @@
 <template>
   <div class="main">
     <div class="App">
-      <div class="cog-mg" v-on:click="toggleModal">
-        <img v-if="!modalOpen" width="20px" src="./assets/icon_settingscog.png" alt="">
+      <div class="cog-mg" v-on:click="this.toggleModal">
+        <img v-if="!this.modalOpen" width="20px" src="./assets/icon_settingscog.png" alt="">
         <img v-else width="20px" src="./assets/icon_cross.png"/>
       </div>
-      <div v-if="isLoading">Loading...</div>
+      <div v-if="this.isLoading">Loading...</div>
       <div v-else>
         <Modal 
-          v-if="modalOpen" 
-          v-bind:cities="cities" 
-          v-bind:weathers="weathers"
-          :APIKey="APIKey" 
-          v-on:add-city="addCity" 
-          v-on:delete-city="deleteCity"
-          v-on:update-cities="updateCities"/> 
+          v-if="this.modalOpen" 
+          v-bind:cities="this.cities" 
+          v-bind:weathers="this.weathers"
+          :APIKey="this.APIKey" 
+          v-on:add-city="this.addCity" 
+          v-on:delete-city="this.deleteCity"
+          v-on:update-cities="this.updateCities"/> 
         <CityList 
           v-else 
-          v-bind:weathers="weathers" 
-          v-on:open-modal="toggleModal"/>
+          v-bind:weathers="this.weathers" 
+          v-on:open-modal="this.toggleModal"/>
       </div>
-      <router-view v-bind:cities="cities"/>
+      <router-view v-bind:cities="this.cities"/>
     </div>
   </div>
 </template>
@@ -57,6 +57,7 @@ export default defineComponent({
   },
   created() {
     this.loadLocalStorage()
+    console.log("Hi from a new version of WeatherApp!")
   },
   mounted() {
     this.loadWeather()

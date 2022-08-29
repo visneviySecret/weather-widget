@@ -26,7 +26,6 @@
   "unpkg": "dist/WeatherWidgetApp.umd.min.js",
   "dependencies": {
     "@types/webpack-env": "^1.18.0",
-    "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
@@ -42,6 +41,7 @@
     "@vue/cli-plugin-typescript": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "@vue/eslint-config-typescript": "^9.1.0",
+    "axios": "^0.27.2",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "sass-loader": "^13.0.2",
