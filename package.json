@@ -20,7 +20,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build:npm": "vue-cli-service build --target lib --name WeatherWidgetApp src/WeatherWidgetApp.vue",
-    "deploy": "node scripts/gh-pages-deploy.js"
+    "deploy": "sh deploy.sh"
   },
   "main": "dist/WeatherWidgetApp.umd.js",
   "unpkg": "dist/WeatherWidgetApp.umd.min.js",
