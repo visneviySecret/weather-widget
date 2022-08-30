@@ -31,6 +31,7 @@ import {ref, defineComponent, reactive, toRefs} from "vue"
 import CityList from "./components/Weather/CityList.vue"
 import Modal from './components/Settings/Modal.vue'
 import City from '@/types/City'
+import Weather from '@/types/Weather'
 import Position from "@/types/Position"
 
 export default defineComponent({
@@ -57,6 +58,7 @@ export default defineComponent({
   created() {
     this.loadLocalStorage()
     console.log("Welcome to weather app!")
+
   },
   mounted() {
     this.loadWeather()
@@ -64,8 +66,9 @@ export default defineComponent({
   },
   methods: {
     toggleModal() {this.modalOpen = !this.modalOpen},
-    addCity(cityName: string, cityId: number, country?: string, weatherData?: object) {
-      const newCity = { name: cityName, id: cityId, country, order: ++this.order }
+    addCity(cityName: string, cityId: number, country?: string, weatherData?: Weather) {
+      if (weatherData == undefined) { window.location.reload() }
+      const newCity = { name: cityName, id: cityId, country, order: ++this.order, weather: weatherData }
       this.cities.push(newCity)
       this.weathers.push(weatherData)
       this.setLocalStorage()
@@ -85,7 +88,7 @@ export default defineComponent({
       this.setLocalStorage()
     },
     loadWeather() {this.cities.forEach(city => this.getCurrentWeather(city))},
-    getCurrentWeather(city: City) {
+    async getCurrentWeather(city: City) {
       const {name, id} = city
       axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${name}&units=imperial&appid=${this.APIKey}`)
         .then(response => {
@@ -95,7 +98,6 @@ export default defineComponent({
         })
     },
     getUserGeoPosition(position: any) {
-      console.log(position)
       const { latitude, longitude } = position.coords
       fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=c1ef089d475b4ed185a97c2195435845`)
         .then(response => response.json())
@@ -105,11 +107,13 @@ export default defineComponent({
         })
     },
     setLocalCity(position: Position) {
-      const { state, postcode } = position
-      this.addCity(state, postcode)
+      const { state, country_code } = position
+      this.addCity(state, Date.now(), country_code.toUpperCase())
       this.setLocalStorage()
     },
-    setLocalStorage() {localStorage.setItem('cities', JSON.stringify(this.cities))},
+    setLocalStorage() {
+      localStorage.setItem('cities', JSON.stringify(this.cities))
+    },
     loadLocalStorage() {
     if (localStorage.getItem('cities'))
       {
@@ -150,6 +154,7 @@ export default defineComponent({
 .App {
   width: 16rem;
   margin: 0 auto;
+  margin-top: 3rem;
   position: relative;
 }
 </style>
